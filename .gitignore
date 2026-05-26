@@ -1,0 +1,32 @@
+# Python
+ai-service/venv/
+ai-service/__pycache__/
+ai-service/models/*.pt
+ai-service/uploads/
+*.pyc
+*.pyo
+.Python
+
+# Node
+backend/node_modules/
+backend/uploads/
+frontend/node_modules/
+frontend/dist/
+frontend/unpackage/
+
+# 环境变量
+.env
+*.env.local
+
+# 编辑器
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 系统
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.override.yml

@@ -1,0 +1,61 @@
+{
+  "pages": [
+    {
+      "path": "pages/home/index",
+      "style": {
+        "navigationBarTitleText": "PhotoAI",
+        "navigationBarBackgroundColor": "#1a1a2e",
+        "navigationBarTextStyle": "white",
+        "backgroundColor": "#0f0f1a"
+      }
+    },
+    {
+      "path": "pages/editor/index",
+      "style": {
+        "navigationBarTitleText": "AI 修图",
+        "navigationBarBackgroundColor": "#1a1a2e",
+        "navigationBarTextStyle": "white",
+        "backgroundColor": "#0f0f1a",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/result/index",
+      "style": {
+        "navigationBarTitleText": "构图分析",
+        "navigationBarBackgroundColor": "#1a1a2e",
+        "navigationBarTextStyle": "white",
+        "backgroundColor": "#0f0f1a"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "PhotoAI",
+    "navigationBarBackgroundColor": "#1a1a2e",
+    "backgroundColor": "#0f0f1a",
+    "app-plus": {
+      "background": "#0f0f1a"
+    }
+  },
+  "tabBar": {
+    "color": "#666",
+    "selectedColor": "#7c6af5",
+    "backgroundColor": "#1a1a2e",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/home/index",
+        "text": "首页",
+        "iconPath": "static/images/tab-home.png",
+        "selectedIconPath": "static/images/tab-home-active.png"
+      },
+      {
+        "pagePath": "pages/editor/index",
+        "text": "修图",
+        "iconPath": "static/images/tab-edit.png",
+        "selectedIconPath": "static/images/tab-edit-active.png"
+      }
+    ]
+  }
+}

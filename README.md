@@ -225,11 +225,24 @@ npm run dev:app
 return 'http://192.168.1.100:3000'; // 你的后端地址
 ```
 
+### Android 原生相机插件（一键集成）
+
+在仓库根目录执行：
+
+```powershell
+.\scripts\integrate-native-camera.ps1
+```
+
+脚本会编译 AAR、复制到 `frontend/nativeplugins/`、将启动图迁入工程相对路径、更新 `manifest.json`。详见 [android-plugin/README.md](android-plugin/README.md)。
+
+集成后须在 HBuilderX 中 **制作自定义调试基座** 再真机运行（标准基座不含本地插件）。
+
 ### App 打包（HBuilderX）
 
 1. 在 HBuilderX 中打开 `frontend` 目录
 2. 修改 `src/manifest.json` 中的 `appid`
-3. 运行 → 发行 → 原生 App 打包
+3. 若使用原生相机插件，先执行 `.\scripts\integrate-native-camera.ps1`
+4. 运行 → 发行 → 原生 App 打包（勾选使用原生插件）
 
 ### 微信小程序
 

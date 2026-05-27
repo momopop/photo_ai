@@ -1,0 +1,20 @@
+{
+  "name": "PhotoAI-Camera",
+  "id": "PhotoAI-Camera",
+  "version": "1.0.0",
+  "description": "PhotoAI 原生高画质相机插件 - 基于 Camera2 API，最大分辨率 JPEG 拍摄",
+  "_dp_type": "nativeplugin",
+  "_dp_nativeplugin": {
+    "android": {
+      "plugins": [
+        {
+          "type": "module",
+          "name": "PhotoAI-Camera",
+          "class": "com.photoai.camera.CameraModule"
+        }
+      ],
+      "integrateType": "aar",
+      "minSdkVersion": "21"
+    }
+  }
+}

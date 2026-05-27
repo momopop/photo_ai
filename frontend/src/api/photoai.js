@@ -3,6 +3,20 @@
  * 统一管理与后端的通信
  */
 
+// ── 原生相机插件（仅 APP-PLUS 生效）──────────────────────────────────────────
+// #ifdef APP-PLUS
+let _nativeCameraPlugin = null;
+function getNativeCameraPlugin() {
+  if (_nativeCameraPlugin !== null) return _nativeCameraPlugin;
+  try {
+    _nativeCameraPlugin = uni.requireNativePlugin('PhotoAI-Camera');
+  } catch (e) {
+    _nativeCameraPlugin = undefined; // 插件未安装，标记为 undefined
+  }
+  return _nativeCameraPlugin;
+}
+// #endif
+
 // 后端地址，H5 可通过环境变量配置，App 直接写服务器 IP
 const BASE_URL = (() => {
   // #ifdef H5
@@ -23,7 +37,7 @@ function uploadRequest(url, filePath, formData = {}) {
       header: {
         'Accept': 'application/json',
       },
-      timeout: 60000,
+      timeout: 180000, // 大文件（最高50MB原图）上传需要更长超时
       success: (res) => {
         try {
           if (res.statusCode < 200 || res.statusCode >= 300) {
@@ -68,6 +82,40 @@ function getRequest(url) {
     });
   });
 }
+
+// ── plus.camera 拍照降级方法（仅 APP-PLUS 编译） ─────────────────────────────
+// #ifdef APP-PLUS
+function _takeWithPlusCamera(resolve, reject) {
+  try {
+    const camera = plus.camera.getCamera();
+    camera.captureImage(
+      (path) => {
+        try {
+          resolve(plus.io.convertLocalFileSystemURL(path));
+        } catch (e) {
+          resolve(path);
+        }
+      },
+      (err) => {
+        if (err.code === 4 || (err.message && err.message.toLowerCase().includes('cancel'))) {
+          reject(new Error('cancelled'));
+        } else {
+          reject(new Error('拍照失败: ' + (err.message || err.code)));
+        }
+      },
+      { filename: '_doc/camera/', index: 1, quality: 100, width: 0, height: 0 }
+    );
+  } catch (e) {
+    uni.chooseImage({
+      count: 1,
+      sourceType: ['camera'],
+      sizeType: ['original'],
+      success: (res) => resolve(res.tempFilePaths[0]),
+      fail: (err) => reject(new Error(err.errMsg?.includes('cancel') ? 'cancelled' : '拍照失败')),
+    });
+  }
+}
+// #endif
 
 /**
  * API 方法集合
@@ -127,37 +175,124 @@ export const photoAPI = {
   },
 
   /**
-   * 从相机拍照
-   * @returns {Promise<string>} 图片临时路径
+   * 从相机拍照 —— 优先使用 PhotoAI 原生插件（Camera2），保证最高原图画质
+   *
+   * 优先级：
+   *   APP-PLUS：① PhotoAI 原生插件（Camera2 最高画质）
+   *             ② plus.camera（HTML5+ 原生）
+   *             ③ uni.chooseImage 兜底
+   *   小程序/H5：uni.chooseImage（sizeType:['original']）
+   *
+   * @param {object} options  { facing:'back'|'front', flash:'auto'|'on'|'off', grid:bool }
+   * @returns {Promise<string>} 图片本地绝对路径
    */
-  takePhoto() {
+  takePhoto(options = {}) {
     return new Promise((resolve, reject) => {
+      // #ifdef APP-PLUS
+      const plugin = getNativeCameraPlugin();
+
+      if (plugin) {
+        // ── 方案一：PhotoAI 原生 Camera2 插件 ────────────────────────────────
+        plugin.takePhoto(
+          {
+            facing: options.facing || 'back',
+            flash: options.flash || 'auto',
+            grid: options.grid !== false, // 默认显示三分法网格线
+          },
+          (result) => {
+            if (result.code === 0 && result.path) {
+              resolve(result.path);
+            } else if (result.code === -1) {
+              reject(new Error('cancelled'));
+            } else if (result.code === -2) {
+              reject(new Error('相机权限被拒绝，请在系统设置中开启'));
+            } else {
+              // 插件出错，降级到 plus.camera
+              _takeWithPlusCamera(resolve, reject);
+            }
+          }
+        );
+      } else {
+        // ── 方案二：HTML5+ plus.camera（插件未安装时的降级方案）──────────────
+        _takeWithPlusCamera(resolve, reject);
+      }
+      // #endif
+
+      // #ifdef MP-WEIXIN || MP-ALIPAY || MP-BAIDU || MP-TOUTIAO || MP-QQ
       uni.chooseImage({
         count: 1,
         sourceType: ['camera'],
-        sizeType: ['original', 'compressed'],
+        sizeType: ['original'],
         success: (res) => resolve(res.tempFilePaths[0]),
         fail: (err) => {
-          if (err.errMsg && err.errMsg.includes('cancel')) {
-            reject(new Error('cancelled'));
-          } else {
-            reject(new Error('拍照失败'));
-          }
+          if (err.errMsg && err.errMsg.includes('cancel')) reject(new Error('cancelled'));
+          else reject(new Error('拍照失败'));
         },
       });
+      // #endif
+
+      // #ifdef H5
+      uni.chooseImage({
+        count: 1,
+        sourceType: ['camera'],
+        sizeType: ['original'],
+        success: (res) => resolve(res.tempFilePaths[0]),
+        fail: (err) => {
+          if (err.errMsg && err.errMsg.includes('cancel')) reject(new Error('cancelled'));
+          else reject(new Error('拍照失败'));
+        },
+      });
+      // #endif
     });
   },
 
   /**
-   * 从相册选择图片
-   * @returns {Promise<string>} 图片临时路径
+   * 从相册选择图片 —— 强制原图，不压缩
+   * @returns {Promise<string>} 图片本地路径
    */
   chooseFromAlbum() {
     return new Promise((resolve, reject) => {
+      // #ifdef APP-PLUS
+      // App 端用 plus.gallery 选图，保证原图路径
+      try {
+        plus.gallery.pick(
+          (path) => {
+            const absPath = plus.io.convertLocalFileSystemURL(path);
+            resolve(absPath);
+          },
+          (err) => {
+            if (err.code === 4 || (err.message && err.message.toLowerCase().includes('cancel'))) {
+              reject(new Error('cancelled'));
+            } else {
+              // gallery 失败时回退 uni API
+              uni.chooseImage({
+                count: 1,
+                sourceType: ['album'],
+                sizeType: ['original'],
+                success: (res) => resolve(res.tempFilePaths[0]),
+                fail: () => reject(new Error('选择图片失败')),
+              });
+            }
+          },
+          { filter: 'image', multiple: false, system: false }
+        );
+      } catch (e) {
+        uni.chooseImage({
+          count: 1,
+          sourceType: ['album'],
+          sizeType: ['original'],
+          success: (res) => resolve(res.tempFilePaths[0]),
+          fail: (err) => reject(new Error(err.errMsg?.includes('cancel') ? 'cancelled' : '选择图片失败')),
+        });
+      }
+      // #endif
+
+      // #ifndef APP-PLUS
+      // 小程序 / H5：sizeType 只选 original
       uni.chooseImage({
         count: 1,
         sourceType: ['album'],
-        sizeType: ['original', 'compressed'],
+        sizeType: ['original'],
         success: (res) => resolve(res.tempFilePaths[0]),
         fail: (err) => {
           if (err.errMsg && err.errMsg.includes('cancel')) {
@@ -167,6 +302,7 @@ export const photoAPI = {
           }
         },
       });
+      // #endif
     });
   },
 

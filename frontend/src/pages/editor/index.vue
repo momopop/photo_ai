@@ -325,11 +325,24 @@ export default {
 
     const chooseImage = async () => {
       try {
-        const path = await photoAPI.chooseFromAlbum();
-        imagePath.value = path;
-        originalPath.value = path;
-        photoStore.setCurrentImage(path);
-        resetParams();
+        uni.showActionSheet({
+          itemList: ['📷  拍照（原图）', '🖼  从相册选择（原图）'],
+          success: async (res) => {
+            try {
+              const path = res.tapIndex === 0
+                ? await photoAPI.takePhoto()
+                : await photoAPI.chooseFromAlbum();
+              imagePath.value = path;
+              originalPath.value = path;
+              photoStore.setCurrentImage(path);
+              resetParams();
+            } catch (e) {
+              if (e.message !== 'cancelled') {
+                uni.showToast({ title: e.message, icon: 'error' });
+              }
+            }
+          },
+        });
       } catch (err) {
         if (err.message !== 'cancelled') {
           uni.showToast({ title: err.message, icon: 'error' });

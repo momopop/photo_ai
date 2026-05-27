@@ -1,0 +1,30 @@
+R_DEF: Internal format may change without notice
+local
+drawable bg_capture_button
+drawable bg_ratio_btn
+drawable bg_ratio_btn_selected
+drawable bg_zoom_badge
+drawable ic_arrow_back
+drawable ic_camera_shutter
+drawable ic_camera_switch
+drawable ic_flash_auto
+drawable ic_flash_off
+drawable ic_flash_on
+drawable ic_photo_library
+id btn_back
+id btn_capture
+id btn_flash
+id btn_gallery
+id btn_ratio_11
+id btn_ratio_169
+id btn_ratio_43
+id btn_ratio_full
+id btn_switch
+id grid_view
+id ratio_overlay
+id shutter_flash
+id texture_view
+id top_bar
+id tv_zoom
+layout activity_camera
+style Theme.PhotoAICamera

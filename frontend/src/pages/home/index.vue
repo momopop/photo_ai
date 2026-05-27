@@ -190,18 +190,53 @@ export default {
       }
     };
 
+    /**
+     * 获取本地图片文件大小（App 端）
+     * 用于上传前告知用户原图大小
+     */
+    const getFileSizeMB = (filePath) => {
+      return new Promise((resolve) => {
+        // #ifdef APP-PLUS
+        try {
+          plus.io.resolveLocalFileSystemURL(
+            filePath,
+            (entry) => entry.file((f) => resolve((f.size / 1024 / 1024).toFixed(1)), () => resolve(null)),
+            () => resolve(null)
+          );
+        } catch {
+          resolve(null);
+        }
+        // #endif
+        // #ifndef APP-PLUS
+        resolve(null);
+        // #endif
+      });
+    };
+
     const handleTakePhoto = async () => {
       try {
         uni.showActionSheet({
-          itemList: ['拍照', '从相册选择'],
+          itemList: ['📷  拍照（原图）', '🖼  从相册选择（原图）'],
           success: async (res) => {
+            let path;
             if (res.tapIndex === 0) {
-              const path = await photoAPI.takePhoto();
-              processImage(path);
+              path = await photoAPI.takePhoto();
             } else {
-              const path = await photoAPI.chooseFromAlbum();
-              processImage(path);
+              path = await photoAPI.chooseFromAlbum();
             }
+            // 文件大小提示
+            const sizeMB = await getFileSizeMB(path);
+            if (sizeMB !== null) {
+              const label = sizeMB > 50
+                ? `图片 ${sizeMB}MB，超过50MB限制，请压缩后重试`
+                : `原图 ${sizeMB}MB，正在上传分析...`;
+              if (sizeMB > 50) {
+                uni.showToast({ title: label, icon: 'none', duration: 3000 });
+                return;
+              }
+              loadingText.value = label;
+            }
+            processImage(path);
           },
         });
       } catch (err) {
@@ -214,6 +249,11 @@ export default {
     const handleChooseAlbum = async () => {
       try {
         const path = await photoAPI.chooseFromAlbum();
+        const sizeMB = await getFileSizeMB(path);
+        if (sizeMB !== null && sizeMB > 50) {
+          uni.showToast({ title: `图片 ${sizeMB}MB，超过50MB限制`, icon: 'none', duration: 3000 });
+          return;
+        }
         processImage(path);
       } catch (err) {
         if (err.message !== 'cancelled') {

@@ -1,0 +1,30 @@
+[
+    {
+        "merged": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-merged_res-9:\\layout\\ime_base_split_test_activity.xml",
+        "source": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-core-1.13.1-1:\\layout\\ime_base_split_test_activity.xml"
+    },
+    {
+        "merged": "com.photoai.camera-merged_res-9:/layout/activity_camera.xml",
+        "source": "com.photoai.camera-main-10:/layout/activity_camera.xml"
+    },
+    {
+        "merged": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-merged_res-9:\\layout\\ime_secondary_split_test_activity.xml",
+        "source": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-core-1.13.1-1:\\layout\\ime_secondary_split_test_activity.xml"
+    },
+    {
+        "merged": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-merged_res-9:\\layout\\notification_template_part_time.xml",
+        "source": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-core-1.13.1-1:\\layout\\notification_template_part_time.xml"
+    },
+    {
+        "merged": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-merged_res-9:\\layout\\notification_template_part_chronometer.xml",
+        "source": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-core-1.13.1-1:\\layout\\notification_template_part_chronometer.xml"
+    },
+    {
+        "merged": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-merged_res-9:\\layout\\activity_camera.xml",
+        "source": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-main-10:\\layout\\activity_camera.xml"
+    },
+    {
+        "merged": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-merged_res-9:\\layout\\custom_dialog.xml",
+        "source": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-core-1.13.1-1:\\layout\\custom_dialog.xml"
+    }
+]

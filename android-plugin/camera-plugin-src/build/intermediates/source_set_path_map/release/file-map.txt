@@ -1,0 +1,13 @@
+com.photoai.camera-profileinstaller-1.3.0-0 C:\Users\tangzhaojie\.gradle\caches\transforms-3\32a9537a559e57f510fc7569250bc682\transformed\profileinstaller-1.3.0\res
+com.photoai.camera-core-1.13.1-1 C:\Users\tangzhaojie\.gradle\caches\transforms-3\429ce9bae2f2ebd32fa91c0fbeb0f541\transformed\core-1.13.1\res
+com.photoai.camera-annotation-experimental-1.4.0-2 C:\Users\tangzhaojie\.gradle\caches\transforms-3\8e668c6f41e434321efa83d404581d1d\transformed\annotation-experimental-1.4.0\res
+com.photoai.camera-lifecycle-runtime-2.6.2-3 C:\Users\tangzhaojie\.gradle\caches\transforms-3\d7cf2aad166e31662e83328532dcbc3a\transformed\lifecycle-runtime-2.6.2\res
+com.photoai.camera-startup-runtime-1.1.1-4 C:\Users\tangzhaojie\.gradle\caches\transforms-3\ec5ec4e3cb85451f82f16c9e6bf31f61\transformed\startup-runtime-1.1.1\res
+com.photoai.camera-core-runtime-2.2.0-5 C:\Users\tangzhaojie\.gradle\caches\transforms-3\ff1b369f9efaa17b93f6d25459ede875\transformed\core-runtime-2.2.0\res
+com.photoai.camera-pngs-6 D:\tangzhaojie\PhotoAI\android-plugin\camera-plugin-src\build\generated\res\pngs\release
+com.photoai.camera-resValues-7 D:\tangzhaojie\PhotoAI\android-plugin\camera-plugin-src\build\generated\res\resValues\release
+com.photoai.camera-mergeReleaseResources-8 D:\tangzhaojie\PhotoAI\android-plugin\camera-plugin-src\build\intermediates\incremental\release\mergeReleaseResources\merged.dir
+com.photoai.camera-mergeReleaseResources-9 D:\tangzhaojie\PhotoAI\android-plugin\camera-plugin-src\build\intermediates\incremental\release\mergeReleaseResources\stripped.dir
+com.photoai.camera-merged_res-10 D:\tangzhaojie\PhotoAI\android-plugin\camera-plugin-src\build\intermediates\merged_res\release
+com.photoai.camera-main-11 D:\tangzhaojie\PhotoAI\android-plugin\camera-plugin-src\src\main\res
+com.photoai.camera-release-12 D:\tangzhaojie\PhotoAI\android-plugin\camera-plugin-src\src\release\res

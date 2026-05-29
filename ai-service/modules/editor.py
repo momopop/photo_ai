@@ -110,6 +110,66 @@ class PhotoEditor:
         cv2.imwrite(output_path, image, [cv2.IMWRITE_JPEG_QUALITY, 95])
         return applied
 
+    def refine(self, input_path: str, output_path: str, target_megapixels: float = 8.0) -> dict:
+        """
+        AI 精修：还原/超分辨率 + HDR 高画质处理。
+        适合对本地优化图（已缩至 1920px）进行画质提升，输出接近原图像素量。
+
+        流程：
+          1. 读取输入（本地优化图，约 1920px）
+          2. 计算目标尺寸（长边提升至 target_megapixels 对应像素，双三次插值）
+          3. 自动白平衡（还原真实色彩）
+          4. CLAHE 自适应对比度增强（局部 HDR 效果）
+          5. 轻量 Unsharp Mask（仅轻微锐化，避免过度）
+          6. 高品质 JPEG 保存
+        """
+        image = cv2.imread(input_path)
+        if image is None:
+            raise ValueError(f"无法读取图像: {input_path}")
+
+        applied = {}
+        h, w = image.shape[:2]
+        current_mp = (w * h) / 1_000_000
+
+        # ── Step 1: 超分辨率（双三次插值放大至目标像素量） ──────────────────
+        if current_mp < target_megapixels * 0.9:
+            scale = (target_megapixels / max(current_mp, 0.01)) ** 0.5
+            new_w = int(w * scale)
+            new_h = int(h * scale)
+            image = cv2.resize(image, (new_w, new_h), interpolation=cv2.INTER_CUBIC)
+            applied["upscale"] = {"from": f"{w}x{h}", "to": f"{new_w}x{new_h}"}
+            h, w = new_h, new_w
+
+        # ── Step 2: 自动白平衡 ────────────────────────────────────────────────
+        image = self._gray_world_white_balance(image)
+        applied["white_balance"] = True
+
+        # ── Step 3: HDR — CLAHE 自适应对比度（局部细节增强） ─────────────────
+        lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
+        l, a, b = cv2.split(lab)
+        # clipLimit=2.5：比自动增强（2.0）略强，增强高光/阴影细节
+        clahe = cv2.createCLAHE(clipLimit=2.5, tileGridSize=(8, 8))
+        l = clahe.apply(l)
+        image = cv2.cvtColor(cv2.merge([l, a, b]), cv2.COLOR_LAB2BGR)
+        applied["hdr_clahe"] = True
+
+        # ── Step 4: 饱和度轻微提升（+8%，使颜色更鲜活但不失真） ──────────────
+        pil = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+        pil = ImageEnhance.Color(pil).enhance(1.08)
+        image = cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
+        applied["saturation_boost"] = 8
+
+        # ── Step 5: 轻量 Unsharp Mask（仅微量，避免过度锐化） ────────────────
+        blurred = cv2.GaussianBlur(image, (0, 0), sigmaX=1.0)
+        # strength=0.2：远低于强锐化的 0.5+，仅恢复插值模糊
+        image = cv2.addWeighted(image, 1.2, blurred, -0.2, 0)
+        image = np.clip(image, 0, 255).astype(np.uint8)
+        applied["unsharp_mask"] = {"sigma": 1.0, "strength": 0.2}
+
+        # ── Step 6: 高品质输出 ────────────────────────────────────────────────
+        cv2.imwrite(output_path, image, [cv2.IMWRITE_JPEG_QUALITY, 97])
+        return applied
+
     def suggest(self, image_path: str) -> dict:
         """
         分析图像并给出修图建议参数

@@ -11,9 +11,9 @@ const repoRoot = path.resolve(__dirname, '..');
 const manifestPath = path.join(repoRoot, 'frontend', 'src', 'manifest.json');
 
 const SPLASH_REL = {
-  hdpi: 'nativeResources/android/splash/splash_480x762.png',
-  xhdpi: 'nativeResources/android/splash/splash_720x1242.png',
-  xxhdpi: 'nativeResources/android/splash/splash_1080x1882.png',
+  hdpi: 'nativeResources/android/splash/snappro_ai_hdpi.png',
+  xhdpi: 'nativeResources/android/splash/snappro_ai_xhdpi.png',
+  xxhdpi: 'nativeResources/android/splash/snappro_ai_xxhdpi.png',
 };
 
 function main() {

@@ -3,29 +3,60 @@
     {
       "path": "pages/home/index",
       "style": {
-        "navigationBarTitleText": "PhotoAI",
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "拍立优",
         "navigationBarBackgroundColor": "#1a1a2e",
         "navigationBarTextStyle": "white",
-        "backgroundColor": "#0f0f1a"
+        "backgroundColor": "#0f0f1a",
+        "enablePullDownRefresh": false,
+        "app-plus": {
+          "titleNView": false,
+          "bounce": "none"
+        }
+      }
+    },
+    {
+      "path": "pages/gallery/index",
+      "style": {
+        "navigationBarTitleText": "图库",
+        "navigationBarBackgroundColor": "#1a1a2e",
+        "navigationBarTextStyle": "white",
+        "backgroundColor": "#0f0f1a",
+        "enablePullDownRefresh": false,
+        "app-plus": {
+          "titleNView": false,
+          "bounce": "none"
+        }
       }
     },
     {
       "path": "pages/editor/index",
       "style": {
+        "navigationStyle": "custom",
         "navigationBarTitleText": "AI 修图",
         "navigationBarBackgroundColor": "#1a1a2e",
         "navigationBarTextStyle": "white",
         "backgroundColor": "#0f0f1a",
-        "enablePullDownRefresh": false
+        "enablePullDownRefresh": false,
+        "app-plus": {
+          "titleNView": false,
+          "bounce": "none"
+        }
       }
     },
     {
       "path": "pages/result/index",
       "style": {
+        "navigationStyle": "custom",
         "navigationBarTitleText": "构图分析",
         "navigationBarBackgroundColor": "#1a1a2e",
         "navigationBarTextStyle": "white",
-        "backgroundColor": "#0f0f1a"
+        "backgroundColor": "#0f0f1a",
+        "enablePullDownRefresh": false,
+        "app-plus": {
+          "titleNView": false,
+          "bounce": "none"
+        }
       }
     }
   ],
@@ -51,10 +82,10 @@
         "selectedIconPath": "static/images/tab-home-active.png"
       },
       {
-        "pagePath": "pages/editor/index",
-        "text": "修图",
-        "iconPath": "static/images/tab-edit.png",
-        "selectedIconPath": "static/images/tab-edit-active.png"
+        "pagePath": "pages/gallery/index",
+        "text": "图库",
+        "iconPath": "static/images/tab-gallery.png",
+        "selectedIconPath": "static/images/tab-gallery-active.png"
       }
     ]
   }

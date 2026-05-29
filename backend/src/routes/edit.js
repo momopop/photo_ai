@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const upload = require('../middlewares/upload');
-const { proxyToAI, AI_SERVICE_URL } = require('../middlewares/aiProxy');
+const { proxyToAI, buildClientMediaUrl } = require('../middlewares/aiProxy');
 const fs = require('fs');
 
 /**
@@ -41,10 +41,9 @@ router.post('/', upload.single('image'), async (req, res, next) => {
     });
 
     if (result.output_url) {
-      const filename = result.output_url.split('/').pop();
-      result.output_full_url = `${req.protocol}://${req.get('host')}${result.output_url}`;
-      // 代理 AI 服务图片
-      result.proxy_url = `${AI_SERVICE_URL}${result.output_url}`;
+      // 统一走本后端代理，手机只访问 BASE_URL:3000，不直连 localhost:8000
+      result.display_url = buildClientMediaUrl(req, result.output_url);
+      result.output_full_url = result.display_url;
     }
 
     res.json({

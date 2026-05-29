@@ -1,9 +1,9 @@
 {
-    "name" : "PhotoAI",
+    "name" : "拍立优",
     "appid" : "__UNI__0FAA75D",
     "description" : "AI 智能构图与修图助手",
-    "versionName" : "1.0.1",
-    "versionCode" : "101",
+    "versionName" : "1.0.3",
+    "versionCode" : "103",
     "transformPx" : false,
     "app-plus" : {
         "usingComponents" : true,
@@ -44,9 +44,9 @@
             "splashscreen" : {
                 "androidStyle" : "default",
                 "android" : {
-                    "hdpi" : "nativeResources/android/splash/splash_480x762.png",
-                    "xhdpi" : "nativeResources/android/splash/splash_720x1242.png",
-                    "xxhdpi" : "nativeResources/android/splash/splash_1080x1882.png"
+                    "hdpi" : "nativeResources/android/splash/snappro_ai_hdpi.png",
+                    "xhdpi" : "nativeResources/android/splash/snappro_ai_xhdpi.png",
+                    "xxhdpi" : "nativeResources/android/splash/snappro_ai_xxhdpi.png"
                 }
             },
             "sdkConfigs" : {

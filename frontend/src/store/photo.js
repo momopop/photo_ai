@@ -3,7 +3,8 @@ import { reactive, ref } from 'vue';
 
 export const usePhotoStore = defineStore('photo', () => {
   // 当前处理的图片路径
-  const currentImagePath = ref('');
+  const currentImagePath      = ref('');
+  const localOptimizedPath    = ref(''); // 端侧本地 AI 优化图（Tier 2）
   const currentImageSize = reactive({ width: 0, height: 0 });
 
   // 分析结果
@@ -45,10 +46,11 @@ export const usePhotoStore = defineStore('photo', () => {
   // 历史记录
   const history = ref([]);
 
-  function setCurrentImage(path, width = 0, height = 0) {
-    currentImagePath.value = path;
-    currentImageSize.width = width;
-    currentImageSize.height = height;
+  function setCurrentImage(path, width = 0, height = 0, optimizedPath = '') {
+    currentImagePath.value   = path;
+    localOptimizedPath.value = optimizedPath;
+    currentImageSize.width   = width;
+    currentImageSize.height  = height;
     resetResults();
   }
 
@@ -100,6 +102,7 @@ export const usePhotoStore = defineStore('photo', () => {
 
   return {
     currentImagePath,
+    localOptimizedPath,
     currentImageSize,
     analysisResult,
     editParams,

@@ -8,7 +8,7 @@
             <text class="icon-text">✦</text>
           </view>
           <view>
-            <text class="app-title">PhotoAI</text>
+            <text class="app-title">SnapPro AI</text>
             <text class="app-subtitle">AI 智能构图 · 自动修图</text>
           </view>
         </view>
@@ -161,33 +161,17 @@ export default {
       }
     };
 
-    const processImage = async (imagePath) => {
-      loading.value = true;
-      loadingText.value = 'AI 分析构图中...';
-
-      try {
-        photoStore.setCurrentImage(imagePath);
-
-        // 触发 AI 分析
-        const result = await photoAPI.analyzeImage(imagePath);
-        photoStore.analysisResult.detection = result.data?.detection;
-        photoStore.analysisResult.composition = result.data?.composition;
-
-        // 跳转到结果页
-        uni.navigateTo({
-          url: '/pages/result/index',
-          animationType: 'slide-in-right',
-        });
-      } catch (err) {
-        if (err.message === 'cancelled') return;
-        uni.showToast({
-          title: `分析失败: ${err.message}`,
-          icon: 'error',
-          duration: 3000,
-        });
-      } finally {
-        loading.value = false;
-      }
+    /**
+     * 拍照/选图后直接跳结果页（秒出原图）。
+     * 相机拍照时 optimizedPath 已由端侧 LocalOptimizer 生成，
+     * 相册选图时 optimizedPath 为空，结果页将调用云端优化。
+     */
+    const processImage = (imagePath, optimizedPath = '') => {
+      photoStore.setCurrentImage(imagePath, 0, 0, optimizedPath);
+      uni.navigateTo({
+        url: '/pages/result/index',
+        animationType: 'slide-in-right',
+      });
     };
 
     /**
@@ -215,30 +199,8 @@ export default {
 
     const handleTakePhoto = async () => {
       try {
-        uni.showActionSheet({
-          itemList: ['📷  拍照（原图）', '🖼  从相册选择（原图）'],
-          success: async (res) => {
-            let path;
-            if (res.tapIndex === 0) {
-              path = await photoAPI.takePhoto();
-            } else {
-              path = await photoAPI.chooseFromAlbum();
-            }
-            // 文件大小提示
-            const sizeMB = await getFileSizeMB(path);
-            if (sizeMB !== null) {
-              const label = sizeMB > 50
-                ? `图片 ${sizeMB}MB，超过50MB限制，请压缩后重试`
-                : `原图 ${sizeMB}MB，正在上传分析...`;
-              if (sizeMB > 50) {
-                uni.showToast({ title: label, icon: 'none', duration: 3000 });
-                return;
-              }
-              loadingText.value = label;
-            }
-            processImage(path);
-          },
-        });
+        const { path, optimizedPath } = await photoAPI.takePhoto();
+        processImage(path, optimizedPath);
       } catch (err) {
         if (err.message !== 'cancelled') {
           uni.showToast({ title: err.message, icon: 'error' });
@@ -300,7 +262,7 @@ export default {
 
 /* 顶部 Header */
 .header {
-  padding: 100rpx 40rpx 30rpx;
+  padding: 120rpx 40rpx 30rpx;
   background: linear-gradient(180deg, rgba(124, 106, 245, 0.15) 0%, transparent 100%);
 }
 

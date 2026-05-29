@@ -10,6 +10,8 @@ const fs = require('fs');
 const analyzeRouter = require('./routes/analyze');
 const editRouter = require('./routes/edit');
 const composeRouter = require('./routes/compose');
+const mediaRouter   = require('./routes/media');
+const refineRouter  = require('./routes/refine');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -62,6 +64,8 @@ app.get('/health', (req, res) => {
 app.use('/api/analyze', analyzeRouter);
 app.use('/api/edit', editRouter);
 app.use('/api/compose', composeRouter);
+app.use('/api/media/ai', mediaRouter);
+app.use('/api/refine',   refineRouter);
 
 // 全局错误处理
 app.use((err, req, res, next) => {

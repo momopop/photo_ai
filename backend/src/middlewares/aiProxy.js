@@ -54,4 +54,17 @@ async function checkAIService() {
   }
 }
 
-module.exports = { proxyToAI, checkAIService, AI_SERVICE_URL };
+/**
+ * 生成手机/WebView 可访问的图片 URL（经本后端代理 AI 服务的 /uploads）
+ * @param {import('express').Request} req
+ * @param {string} aiPath 如 /uploads/output_xxx.jpg
+ */
+function buildClientMediaUrl(req, aiPath) {
+  if (!aiPath) return '';
+  const path = aiPath.startsWith('/') ? aiPath : `/${aiPath}`;
+  const host = req.get('x-forwarded-host') || req.get('host');
+  const proto = req.get('x-forwarded-proto') || req.protocol || 'http';
+  return `${proto}://${host}/api/media/ai${path}`;
+}
+
+module.exports = { proxyToAI, checkAIService, AI_SERVICE_URL, buildClientMediaUrl };

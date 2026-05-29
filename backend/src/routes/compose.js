@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const upload = require('../middlewares/upload');
-const { proxyToAI, AI_SERVICE_URL, checkAIService } = require('../middlewares/aiProxy');
+const { proxyToAI, AI_SERVICE_URL, checkAIService, buildClientMediaUrl } = require('../middlewares/aiProxy');
 const fs = require('fs');
 
 /**
@@ -16,12 +16,11 @@ router.post('/auto', upload.single('image'), async (req, res, next) => {
   try {
     const result = await proxyToAI('/api/auto-compose', req.file.path);
 
-    // 构建代理 URL
     if (result.preview_url) {
-      result.preview_full_url = `${AI_SERVICE_URL}${result.preview_url}`;
+      result.preview_full_url = buildClientMediaUrl(req, result.preview_url);
     }
     if (result.original_url) {
-      result.original_full_url = `${AI_SERVICE_URL}${result.original_url}`;
+      result.original_full_url = buildClientMediaUrl(req, result.original_url);
     }
 
     res.json({

@@ -1,39 +1,87 @@
 [
     {
-        "merged": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-merged_res-9:\\drawable\\notification_tile_bg.xml",
-        "source": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-core-1.13.1-1:\\drawable\\notification_tile_bg.xml"
-    },
-    {
         "merged": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-merged_res-9:\\drawable\\ic_camera_switch.xml",
         "source": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-main-10:\\drawable\\ic_camera_switch.xml"
     },
     {
-        "merged": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-merged_res-9:\\drawable\\notification_bg_low.xml",
-        "source": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-core-1.13.1-1:\\drawable\\notification_bg_low.xml"
+        "merged": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-merged_res-9:\\drawable\\notification_tile_bg.xml",
+        "source": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-core-1.13.1-1:\\drawable\\notification_tile_bg.xml"
     },
     {
-        "merged": "com.photoai.camera-merged_res-9:/drawable/bg_ratio_btn.xml",
-        "source": "com.photoai.camera-main-10:/drawable/bg_ratio_btn.xml"
+        "merged": "com.photoai.camera-merged_res-9:/drawable/bg_hint_pill.xml",
+        "source": "com.photoai.camera-main-10:/drawable/bg_hint_pill.xml"
     },
     {
         "merged": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-merged_res-9:\\drawable\\ic_flash_on.xml",
         "source": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-main-10:\\drawable\\ic_flash_on.xml"
     },
     {
-        "merged": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-merged_res-9:\\drawable\\ic_flash_auto.xml",
-        "source": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-main-10:\\drawable\\ic_flash_auto.xml"
-    },
-    {
         "merged": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-merged_res-9:\\drawable\\ic_arrow_back.xml",
         "source": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-main-10:\\drawable\\ic_arrow_back.xml"
     },
     {
-        "merged": "com.photoai.camera-merged_res-9:/drawable/bg_zoom_badge.xml",
-        "source": "com.photoai.camera-main-10:/drawable/bg_zoom_badge.xml"
+        "merged": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-merged_res-9:\\drawable\\bg_panel_popup.xml",
+        "source": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-main-10:\\drawable\\bg_panel_popup.xml"
+    },
+    {
+        "merged": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-merged_res-9:\\drawable\\bg_pill_inactive.xml",
+        "source": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-main-10:\\drawable\\bg_pill_inactive.xml"
     },
     {
         "merged": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-merged_res-9:\\drawable\\bg_capture_button.xml",
         "source": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-main-10:\\drawable\\bg_capture_button.xml"
+    },
+    {
+        "merged": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-merged_res-9:\\drawable\\ic_ratio.xml",
+        "source": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-main-10:\\drawable\\ic_ratio.xml"
+    },
+    {
+        "merged": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-merged_res-9:\\drawable\\bg_pill_active.xml",
+        "source": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-main-10:\\drawable\\bg_pill_active.xml"
+    },
+    {
+        "merged": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-merged_res-9:\\drawable\\ic_camera_shutter.xml",
+        "source": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-main-10:\\drawable\\ic_camera_shutter.xml"
+    },
+    {
+        "merged": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-merged_res-9:\\drawable\\bg_ratio_btn.xml",
+        "source": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-main-10:\\drawable\\bg_ratio_btn.xml"
+    },
+    {
+        "merged": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-merged_res-9:\\drawable\\notification_icon_background.xml",
+        "source": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-core-1.13.1-1:\\drawable\\notification_icon_background.xml"
+    },
+    {
+        "merged": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-merged_res-9:\\drawable\\ic_settings.xml",
+        "source": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-main-10:\\drawable\\ic_settings.xml"
+    },
+    {
+        "merged": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-merged_res-9:\\drawable\\bg_param_active.xml",
+        "source": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-main-10:\\drawable\\bg_param_active.xml"
+    },
+    {
+        "merged": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-merged_res-9:\\drawable\\notification_bg_low.xml",
+        "source": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-core-1.13.1-1:\\drawable\\notification_bg_low.xml"
+    },
+    {
+        "merged": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-merged_res-9:\\drawable\\ic_flash_auto.xml",
+        "source": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-main-10:\\drawable\\ic_flash_auto.xml"
+    },
+    {
+        "merged": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-merged_res-9:\\drawable\\ic_grid.xml",
+        "source": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-main-10:\\drawable\\ic_grid.xml"
+    },
+    {
+        "merged": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-merged_res-9:\\drawable\\bg_param_strip.xml",
+        "source": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-main-10:\\drawable\\bg_param_strip.xml"
+    },
+    {
+        "merged": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-merged_res-9:\\drawable\\bg_zoom_badge.xml",
+        "source": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-main-10:\\drawable\\bg_zoom_badge.xml"
+    },
+    {
+        "merged": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-merged_res-9:\\drawable\\bg_ratio_btn_selected.xml",
+        "source": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-main-10:\\drawable\\bg_ratio_btn_selected.xml"
     },
     {
         "merged": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-merged_res-9:\\drawable\\ic_flash_off.xml",
@@ -44,19 +92,11 @@
         "source": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-main-10:\\drawable\\ic_photo_library.xml"
     },
     {
-        "merged": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-merged_res-9:\\drawable\\ic_camera_shutter.xml",
-        "source": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-main-10:\\drawable\\ic_camera_shutter.xml"
+        "merged": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-merged_res-9:\\drawable\\ic_reset.xml",
+        "source": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-main-10:\\drawable\\ic_reset.xml"
     },
     {
         "merged": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-merged_res-9:\\drawable\\notification_bg.xml",
         "source": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-core-1.13.1-1:\\drawable\\notification_bg.xml"
-    },
-    {
-        "merged": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-merged_res-9:\\drawable\\notification_icon_background.xml",
-        "source": "C:\\Users\\tangzhaojie\\.gradle\\daemon\\8.4\\com.photoai.camera-core-1.13.1-1:\\drawable\\notification_icon_background.xml"
-    },
-    {
-        "merged": "com.photoai.camera-merged_res-9:/drawable/bg_ratio_btn_selected.xml",
-        "source": "com.photoai.camera-main-10:/drawable/bg_ratio_btn_selected.xml"
     }
 ]

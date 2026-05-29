@@ -94,10 +94,14 @@ public class CameraModule extends UniModule {
         if (cb == null) return;
 
         if (resultCode == Activity.RESULT_OK && data != null) {
-            String path = data.getStringExtra(CameraActivity.RESULT_PATH);
+            String path          = data.getStringExtra(CameraActivity.RESULT_PATH);
+            String optimizedPath = data.getStringExtra(CameraActivity.RESULT_OPTIMIZED_PATH);
             JSONObject result = new JSONObject();
             result.put("code", 0);
             result.put("path", path);
+            if (optimizedPath != null && !optimizedPath.isEmpty()) {
+                result.put("optimizedPath", optimizedPath);
+            }
             cb.invoke(result);
         } else {
             invokeError(cb, -1, "cancelled");

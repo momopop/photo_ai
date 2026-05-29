@@ -17,12 +17,11 @@ function getNativeCameraPlugin() {
 }
 // #endif
 
-// 后端地址，H5 可通过环境变量配置，App 直接写服务器 IP
-const BASE_URL = (() => {
-  // #ifdef H5
-  return process.env.VUE_APP_API_URL || 'http://192.168.122.118:3000';
-  // #endif
-})();
+// 后端地址（所有平台均需赋值）
+let BASE_URL = 'http://192.168.122.118:3000';
+// #ifdef H5
+BASE_URL = process.env.VUE_APP_API_URL || 'http://192.168.122.118:3000';
+// #endif
 
 /**
  * 上传文件并发送请求的核心方法（App 环境）
@@ -86,14 +85,15 @@ function getRequest(url) {
 // ── plus.camera 拍照降级方法（仅 APP-PLUS 编译） ─────────────────────────────
 // #ifdef APP-PLUS
 function _takeWithPlusCamera(resolve, reject) {
+  const wrapPath = (p) => ({ path: p, optimizedPath: '' });
   try {
     const camera = plus.camera.getCamera();
     camera.captureImage(
       (path) => {
         try {
-          resolve(plus.io.convertLocalFileSystemURL(path));
+          resolve(wrapPath(plus.io.convertLocalFileSystemURL(path)));
         } catch (e) {
-          resolve(path);
+          resolve(wrapPath(path));
         }
       },
       (err) => {
@@ -110,7 +110,7 @@ function _takeWithPlusCamera(resolve, reject) {
       count: 1,
       sourceType: ['camera'],
       sizeType: ['original'],
-      success: (res) => resolve(res.tempFilePaths[0]),
+      success: (res) => resolve(wrapPath(res.tempFilePaths[0])),
       fail: (err) => reject(new Error(err.errMsg?.includes('cancel') ? 'cancelled' : '拍照失败')),
     });
   }
@@ -120,8 +120,55 @@ function _takeWithPlusCamera(resolve, reject) {
 /**
  * API 方法集合
  */
+/**
+ * 将本地绝对路径转为当前平台 <image> 可加载的地址（APP 需 file://）
+ */
+/**
+ * 从 API 响应中解析可在 App/H5 中展示的服务端图片 URL
+ * 优先 display_url / output_full_url（经 Node 代理，避免 localhost:8000）
+ */
+export function resolveServerImageUrl(data, baseUrl = BASE_URL) {
+  if (!data) return '';
+  const pick = data.display_url || data.output_full_url || data.preview_full_url
+    || data.original_full_url;
+  if (pick) {
+    if (/^https?:\/\//i.test(pick)) {
+      if (/localhost|127\.0\.0\.1/i.test(pick)) {
+        const m = pick.match(/\/uploads\/[^?#]+/);
+        if (m) return `${baseUrl}/api/media/ai${m[0]}`;
+      }
+      return pick;
+    }
+    return `${baseUrl}${pick.startsWith('/') ? pick : `/${pick}`}`;
+  }
+  const rel = data.output_url || data.preview_url || data.original_url;
+  if (rel) {
+    const p = rel.startsWith('/') ? rel : `/${rel}`;
+    return `${baseUrl}/api/media/ai${p}`;
+  }
+  return '';
+}
+
+export function toAppImageSrc(path) {
+  if (!path) return '';
+  if (/^https?:\/\//i.test(path) || path.startsWith('data:')) return path;
+  // #ifdef APP-PLUS
+  if (path.startsWith('file://')) return path;
+  try {
+    return plus.io.convertLocalFileSystemURL(path);
+  } catch (_) {
+    return path.startsWith('/') ? `file://${path}` : path;
+  }
+  // #endif
+  // #ifndef APP-PLUS
+  return path;
+  // #endif
+}
+
 export const photoAPI = {
   BASE_URL,
+  toAppImageSrc,
+  resolveServerImageUrl,
 
   /**
    * 检查服务状态
@@ -167,11 +214,29 @@ export const photoAPI = {
   },
 
   /**
-   * 全自动构图（一键智能处理）
+   * 全自动构图（一键智能处理）- 本地快速优化
    * @param {string} filePath 本地图片路径
    */
   autoCompose(filePath) {
     return uploadRequest('/api/compose/auto', filePath);
+  },
+
+  /**
+   * 快速本地优化（autoCompose 别名，用于结果页背景调用）
+   */
+  quickOptimize(filePath) {
+    return uploadRequest('/api/compose/auto', filePath);
+  },
+
+  /**
+   * AI 精修（云端）：超分辨率放大 + 自动白平衡 + HDR 增强，不过度锐化。
+   * @param {string} filePath   本地图片路径（本地优化图或原图）
+   * @param {number} targetMp   目标百万像素（默认 8，即约 3264x2448）
+   */
+  refinedOptimize(filePath, targetMp = 8.0) {
+    return uploadRequest('/api/refine', filePath, {
+      target_mp: String(targetMp),
+    });
   },
 
   /**
@@ -197,17 +262,17 @@ export const photoAPI = {
           {
             facing: options.facing || 'back',
             flash: options.flash || 'auto',
-            grid: options.grid !== false, // 默认显示三分法网格线
+            grid: options.grid !== false,
           },
           (result) => {
             if (result.code === 0 && result.path) {
-              resolve(result.path);
+              // 同时返回原图路径和端侧优化图路径（Tier 2）
+              resolve({ path: result.path, optimizedPath: result.optimizedPath || '' });
             } else if (result.code === -1) {
               reject(new Error('cancelled'));
             } else if (result.code === -2) {
               reject(new Error('相机权限被拒绝，请在系统设置中开启'));
             } else {
-              // 插件出错，降级到 plus.camera
               _takeWithPlusCamera(resolve, reject);
             }
           }

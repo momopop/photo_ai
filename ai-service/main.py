@@ -190,6 +190,47 @@ async def edit_image(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.post("/api/refine")
+async def refine_image(
+    file: UploadFile = File(...),
+    target_megapixels: float = Form(8.0),
+):
+    """
+    AI 精修接口：超分辨率放大 + 自动白平衡 + HDR 增强 + 轻量 Unsharp Mask。
+    适合对本地优化图（已缩至约 1920px）进行画质提升，输出接近原图分辨率。
+    """
+    if not is_image_upload(file.content_type, file.filename):
+        raise HTTPException(status_code=400, detail="只支持图片文件")
+
+    file_id = str(uuid.uuid4())
+    suffix = Path(file.filename).suffix if file.filename else ".jpg"
+    if suffix.lower() not in {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".gif", ".heic", ".heif"}:
+        suffix = ".jpg"
+    input_path  = UPLOAD_DIR / f"input_{file_id}{suffix}"
+    output_path = UPLOAD_DIR / f"refine_{file_id}.jpg"
+
+    async with aiofiles.open(input_path, "wb") as f:
+        content = await file.read()
+        await f.write(content)
+
+    try:
+        editor = get_editor()
+        loop = asyncio.get_event_loop()
+        ready_path = await loop.run_in_executor(None, prepare_image_file, str(input_path))
+        result = await loop.run_in_executor(
+            None, editor.refine, ready_path, str(output_path), target_megapixels
+        )
+        return {
+            "file_id": file_id,
+            "output_url": f"/uploads/refine_{file_id}.jpg",
+            "adjustments_applied": result,
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.post("/api/auto-compose")
 async def auto_compose(file: UploadFile = File(...)):
     """

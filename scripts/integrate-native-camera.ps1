@@ -124,9 +124,9 @@ Write-Step "Copy splash images to nativeResources"
 New-Item -ItemType Directory -Force -Path $SplashDir | Out-Null
 
 $splashMap = @(
-    @{ Pattern = '*480x762*';  Out = 'splash_480x762.png' }
-    @{ Pattern = '*720x1242*'; Out = 'splash_720x1242.png' }
-    @{ Pattern = '*1080x1882*'; Out = 'splash_1080x1882.png' }
+    @{ Pattern = '*480x762*';  Out = 'snappro_ai_hdpi.png' }
+    @{ Pattern = '*720x1242*'; Out = 'snappro_ai_xhdpi.png' }
+    @{ Pattern = '*1080x1882*'; Out = 'snappro_ai_xxhdpi.png' }
 )
 
 $downloadDir = Join-Path $env:USERPROFILE 'Downloads'

@@ -6,45 +6,58 @@
     @touchcancel="onTouchEnd"
   >
     <view class="crop-stage" :id="stageId">
-      <view class="transform-layer" :style="transformLayerStyle">
+      <!-- 仅图片层应用变换；裁切框固定在屏幕上 -->
+      <view
+        v-if="layoutReady"
+        class="image-transform-wrap"
+        :style="imageWrapStyle"
+      >
         <image
           class="crop-image"
           :src="imageSrc"
-          mode="aspectFit"
+          mode="aspectFill"
           @load="onImageLoad"
         />
-
-        <template v-if="layoutReady">
-          <view class="shade shade-top" :style="shadeTop" />
-          <view class="shade shade-bottom" :style="shadeBottom" />
-          <view class="shade shade-left" :style="shadeLeft" />
-          <view class="shade shade-right" :style="shadeRight" />
-
-          <view
-            class="crop-box"
-            :style="boxStyle"
-            @touchstart.stop="onTouchStart($event, 'move')"
-          >
-            <view class="crop-grid">
-              <view class="grid-line grid-v1" />
-              <view class="grid-line grid-v2" />
-              <view class="grid-line grid-h1" />
-              <view class="grid-line grid-h2" />
-            </view>
-            <view class="corner corner-tl" />
-            <view class="corner corner-tr" />
-            <view class="corner corner-bl" />
-            <view class="corner corner-br" />
-            <view
-              v-for="h in HANDLES"
-              :key="h"
-              class="handle"
-              :class="'handle-' + h"
-              @touchstart.stop="onTouchStart($event, h)"
-            />
-          </view>
-        </template>
       </view>
+      <image
+        v-else
+        class="crop-image crop-image-loading"
+        :src="imageSrc"
+        mode="aspectFit"
+        @load="onImageLoad"
+      />
+
+      <!-- 裁切框与遮罩：不参与旋转/倾斜，始终与屏幕对齐 -->
+      <template v-if="layoutReady">
+        <view class="shade shade-top" :style="shadeTop" />
+        <view class="shade shade-bottom" :style="shadeBottom" />
+        <view class="shade shade-left" :style="shadeLeft" />
+        <view class="shade shade-right" :style="shadeRight" />
+
+        <view
+          class="crop-box"
+          :style="boxStyle"
+          @touchstart.stop="onTouchStart($event, 'move')"
+        >
+          <view class="crop-grid">
+            <view class="grid-line grid-v1" />
+            <view class="grid-line grid-v2" />
+            <view class="grid-line grid-h1" />
+            <view class="grid-line grid-h2" />
+          </view>
+          <view class="corner corner-tl" />
+          <view class="corner corner-tr" />
+          <view class="corner corner-bl" />
+          <view class="corner corner-br" />
+          <view
+            v-for="h in HANDLES"
+            :key="h"
+            class="handle"
+            :class="'handle-' + h"
+            @touchstart.stop="onTouchStart($event, h)"
+          />
+        </view>
+      </template>
     </view>
   </view>
 </template>
@@ -67,6 +80,7 @@ export default {
     flipV: { type: Boolean, default: false },
     skewH: { type: Number, default: 0 },
     skewV: { type: Number, default: 0 },
+    distort: { type: Number, default: 0 },
     modelValue: {
       type: Object,
       default: () => DEFAULT_CROP(),
@@ -78,7 +92,6 @@ export default {
     const stageId = `cropStage_${instance?.uid || Date.now()}`;
 
     const layoutReady = ref(false);
-    const stageSize = ref({ w: 0, h: 0 });
     const imageRect = ref({ x: 0, y: 0, w: 0, h: 0 });
     const naturalSize = ref({ w: 0, h: 0 });
     const crop = ref({ ...props.modelValue });
@@ -99,14 +112,20 @@ export default {
       emit('update:modelValue', { ...crop.value });
     };
 
-    const transformLayerStyle = computed(() => {
+    const imageWrapStyle = computed(() => {
+      const ir = imageRect.value;
       const sx = props.flipH ? -1 : 1;
       const sy = props.flipV ? -1 : 1;
-      const parts = [
-        'transform-origin: center center',
-        `transform: rotate(${props.rotation}deg) scaleX(${sx}) scaleY(${sy}) skewX(${props.skewH}deg) skewY(${props.skewV}deg)`,
-      ];
-      return parts.join('; ');
+      const skewX = props.skewH + props.distort * 0.5;
+      const skewY = props.skewV + props.distort * 0.5;
+      return {
+        left: `${ir.x}px`,
+        top: `${ir.y}px`,
+        width: `${ir.w}px`,
+        height: `${ir.h}px`,
+        transformOrigin: 'center center',
+        transform: `rotate(${props.rotation}deg) scaleX(${sx}) scaleY(${sy}) skewX(${skewX}deg) skewY(${skewY}deg)`,
+      };
     });
 
     const measureLayout = () => {
@@ -115,7 +134,6 @@ export default {
         .select(`#${stageId}`)
         .boundingClientRect((stage) => {
           if (!stage || !naturalSize.value.w) return;
-          stageSize.value = { w: stage.width, h: stage.height };
           imageRect.value = calcAspectFitRect(
             stage.width,
             stage.height,
@@ -128,6 +146,7 @@ export default {
     };
 
     const onImageLoad = async () => {
+      if (naturalSize.value.w > 0 && layoutReady.value) return;
       layoutReady.value = false;
       try {
         const info = await getImageInfo(props.imageSrc);
@@ -140,6 +159,7 @@ export default {
     };
 
     watch(() => props.imageSrc, () => {
+      naturalSize.value = { w: 0, h: 0 };
       layoutReady.value = false;
       nextTick(() => onImageLoad());
     });
@@ -306,7 +326,7 @@ export default {
       HANDLES,
       stageId,
       layoutReady,
-      transformLayerStyle,
+      imageWrapStyle,
       boxStyle,
       shadeTop,
       shadeBottom,
@@ -333,23 +353,24 @@ export default {
   width: 100%;
   height: 100%;
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
-.transform-layer {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.image-transform-wrap {
+  position: absolute;
+  overflow: hidden;
+  z-index: 4;
 }
 
 .crop-image {
   width: 100%;
   height: 100%;
+  display: block;
+}
+
+.crop-image-loading {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
 }
 
 .shade {
@@ -362,7 +383,7 @@ export default {
 .crop-box {
   position: absolute;
   box-sizing: border-box;
-  border: 1px solid rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.9);
   z-index: 8;
 }
 

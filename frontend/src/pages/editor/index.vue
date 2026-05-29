@@ -73,6 +73,7 @@
           :flip-v="cropState.flipV"
           :skew-h="cropState.skewH"
           :skew-v="cropState.skewV"
+          :distort="cropState.distort"
         />
       </template>
 

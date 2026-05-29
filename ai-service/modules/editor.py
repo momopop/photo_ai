@@ -140,31 +140,34 @@ class PhotoEditor:
             applied["upscale"] = {"from": f"{w}x{h}", "to": f"{new_w}x{new_h}"}
             h, w = new_h, new_w
 
-        # ── Step 2: 自动白平衡 ────────────────────────────────────────────────
+        # ── Step 2: 轻度白平衡（自然肤色，避免偏色过重） ─────────────────────
+        before_wb = image.copy()
         image = self._gray_world_white_balance(image)
-        applied["white_balance"] = True
+        image = cv2.addWeighted(image, 0.7, before_wb, 0.3, 0)
+        applied["white_balance"] = "gentle"
 
-        # ── Step 3: HDR — CLAHE 自适应对比度（局部细节增强） ─────────────────
+        # ── Step 3: 柔和 CLAHE（低对比、自然通透，不过度 HDR） ───────────────
         lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
         l, a, b = cv2.split(lab)
-        # clipLimit=2.5：比自动增强（2.0）略强，增强高光/阴影细节
-        clahe = cv2.createCLAHE(clipLimit=2.5, tileGridSize=(8, 8))
-        l = clahe.apply(l)
+        clahe = cv2.createCLAHE(clipLimit=1.35, tileGridSize=(8, 8))
+        l_soft = clahe.apply(l)
+        # 与原亮度通道混合，压低对比度与“清晰度”感
+        l = cv2.addWeighted(l, 0.55, l_soft, 0.45, 0)
         image = cv2.cvtColor(cv2.merge([l, a, b]), cv2.COLOR_LAB2BGR)
-        applied["hdr_clahe"] = True
+        applied["hdr_clahe"] = {"clipLimit": 1.35, "blend": 0.45}
 
-        # ── Step 4: 饱和度轻微提升（+8%，使颜色更鲜活但不失真） ──────────────
+        # ── Step 4: 色彩自然（饱和度微调 +2%，不偏艳） ───────────────────────
         pil = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-        pil = ImageEnhance.Color(pil).enhance(1.08)
+        pil = ImageEnhance.Color(pil).enhance(1.02)
+        pil = ImageEnhance.Contrast(pil).enhance(1.03)
         image = cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
-        applied["saturation_boost"] = 8
+        applied["natural_color"] = {"saturation": 1.02, "contrast": 1.03}
 
-        # ── Step 5: 轻量 Unsharp Mask（仅微量，避免过度锐化） ────────────────
-        blurred = cv2.GaussianBlur(image, (0, 0), sigmaX=1.0)
-        # strength=0.2：远低于强锐化的 0.5+，仅恢复插值模糊
-        image = cv2.addWeighted(image, 1.2, blurred, -0.2, 0)
+        # ── Step 5: 极轻锐化（仅补偿缩放模糊，避免清晰度过高） ───────────────
+        blurred = cv2.GaussianBlur(image, (0, 0), sigmaX=0.8)
+        image = cv2.addWeighted(image, 1.06, blurred, -0.06, 0)
         image = np.clip(image, 0, 255).astype(np.uint8)
-        applied["unsharp_mask"] = {"sigma": 1.0, "strength": 0.2}
+        applied["unsharp_mask"] = {"sigma": 0.8, "strength": 0.06}
 
         # ── Step 6: 高品质输出 ────────────────────────────────────────────────
         cv2.imwrite(output_path, image, [cv2.IMWRITE_JPEG_QUALITY, 97])
